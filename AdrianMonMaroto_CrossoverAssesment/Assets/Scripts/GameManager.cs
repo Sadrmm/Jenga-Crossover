@@ -4,10 +4,23 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    private enum ORDER
+    {
+        PREVIOUS = -1,
+        SAME = 0,
+        NEXT = 1
+    }
+
+    [Header("Prefabs")]
     [SerializeField] JengaBlock _jengaBlock;
     [SerializeField] GameObject _jengaRow;
 
+    [Header("Level")]
     [SerializeField] SpawnPoint[] _spawnPoints;
+    [SerializeField] CameraControl _cameraControl;
+    
+    [Min(0)]
+    [SerializeField] private int _spawnIndex;
 
     IEnumerator Start()
     {
@@ -17,6 +30,23 @@ public class GameManager : MonoBehaviour
         SpawnJengaStack(_spawnPoints[0], ref firstIndex);
         SpawnJengaStack(_spawnPoints[1], ref firstIndex);
         SpawnJengaStack(_spawnPoints[2], ref firstIndex);
+        
+        // just in case the designer put an incorrect index, we put the latest
+        if (_spawnIndex > _spawnPoints.Length) {
+            _spawnIndex = _spawnPoints.Length - 1;
+        }
+        SwitchStackFocus(ORDER.SAME);
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Q)) {
+            SwitchStackFocus(ORDER.PREVIOUS);
+        }
+
+        if (Input.GetKeyDown(KeyCode.E)) {
+            SwitchStackFocus(ORDER.NEXT);
+        }
     }
 
     private void SpawnJengaStack(SpawnPoint spawnPoint, ref int firstIndex)
@@ -82,5 +112,17 @@ public class GameManager : MonoBehaviour
                 flipRot = !flipRot;
             }
         }
+    }
+
+    private void SwitchStackFocus(ORDER order)
+    {
+        _spawnIndex += (int)order;
+
+        if (_spawnIndex < 0)
+            _spawnIndex = _spawnPoints.Length - 1;
+        if (_spawnIndex >= _spawnPoints.Length)
+            _spawnIndex = 0;
+
+        _cameraControl.SetTarget(_spawnPoints[_spawnIndex].Center);
     }
 }
