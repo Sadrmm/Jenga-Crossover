@@ -512,8 +512,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _rotSpeed: 1
   _distanceToNewTarget: 15
-  _invertX: 0
-  _invertY: 0
+  _invertX: 1
+  _invertY: 1
 --- !u!1001 &1014363774
 PrefabInstance:
   m_ObjectHideFlags: 0
