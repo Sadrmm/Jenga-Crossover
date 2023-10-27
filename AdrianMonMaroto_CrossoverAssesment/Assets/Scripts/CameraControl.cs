@@ -1,10 +1,12 @@
-using Cinemachine;
 using UnityEngine;
 
 public class CameraControl : MonoBehaviour
 {
     [SerializeField] float _rotSpeed = 1.0f;
     [SerializeField] float _distanceToNewTarget = 15f;
+
+    [SerializeField] bool _invertX = false;
+    [SerializeField] bool _invertY = false;
 
     private Camera _cam;
     private Transform _target;
@@ -21,16 +23,14 @@ public class CameraControl : MonoBehaviour
             return;
         }
 
-        if (Input.GetMouseButtonDown(0))
-        {
+        if (Input.GetMouseButtonDown(0)) {
             _previousPosition = Input.mousePosition;
         }
 
-        if (Input.GetMouseButton(0))
-        {
+        if (Input.GetMouseButton(0)) {
             Vector3 deltaMousePosition = Input.mousePosition - _previousPosition;
-            float rotationX = deltaMousePosition.y * _rotSpeed;
-            float rotationY = -deltaMousePosition.x * _rotSpeed;
+            float rotationX = deltaMousePosition.y * _rotSpeed * (_invertX ? -1 : 1);
+            float rotationY = -deltaMousePosition.x * _rotSpeed * (_invertY ? -1 : 1);
 
             transform.RotateAround(_target.position, Vector3.up, rotationY);
             transform.RotateAround(_target.position, transform.right, rotationX);

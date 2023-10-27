@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,6 +15,10 @@ public class GameManager : MonoBehaviour
     [Header("Prefabs")]
     [SerializeField] JengaBlock _jengaBlock;
     [SerializeField] GameObject _jengaRow;
+    [SerializeField] LayerMask _jengaLayerMask;
+
+    [Header("UI")]
+    [SerializeField] UIJengaManager _uiJengaManager;
 
     [Header("Level")]
     [SerializeField] SpawnPoint[] _spawnPoints;
@@ -40,13 +45,54 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Q)) {
+        ChangeStack();
+        HideShowJengaInfo();
+    }
+
+    private void HideShowJengaInfo()
+    {
+        if (Input.GetMouseButtonDown(1))
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            Debug.DrawRay(ray.origin, ray.direction * 100, Color.red, 10.0f);
+
+            if (Physics.Raycast(ray, out RaycastHit hitInfo, _jengaLayerMask))
+            {
+                Debug.Log(hitInfo.collider.gameObject);
+
+                JengaBlock jengaBlock = hitInfo.collider.GetComponent<JengaBlock>();
+
+                if (jengaBlock == null)
+                    return;
+
+                StackData stackData = jengaBlock.Data;
+
+                ShowData(stackData);
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            _uiJengaManager.HideAll();
+        }
+    }
+
+    private void ChangeStack()
+    {
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
             SwitchStackFocus(ORDER.PREVIOUS);
         }
 
-        if (Input.GetKeyDown(KeyCode.E)) {
+        if (Input.GetKeyDown(KeyCode.E))
+        {
             SwitchStackFocus(ORDER.NEXT);
         }
+    }
+
+    private void ShowData(StackData data)
+    {
+        _uiJengaManager.ShowDataInfo(data.grade, data.domain, data.cluster, data.standardid, data.standarddescription);
     }
 
     private void SpawnJengaStack(SpawnPoint spawnPoint, ref int firstIndex)
