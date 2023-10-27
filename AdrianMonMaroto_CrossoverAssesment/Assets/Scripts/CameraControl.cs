@@ -29,8 +29,9 @@ public class CameraControl : MonoBehaviour
 
         if (Input.GetMouseButton(0)) {
             Vector3 deltaMousePosition = Input.mousePosition - _previousPosition;
-            float rotationX = deltaMousePosition.y * _rotSpeed * (_invertX ? -1 : 1);
-            float rotationY = -deltaMousePosition.x * _rotSpeed * (_invertY ? -1 : 1);
+            float rotationX = deltaMousePosition.y * _rotSpeed * (_invertY ? -1 : 1);
+            float rotationY = -deltaMousePosition.x * _rotSpeed * (_invertX ? -1 : 1);
+            Debug.Log($"{rotationX}, {rotationY}");
 
             transform.RotateAround(_target.position, Vector3.up, rotationY);
             transform.RotateAround(_target.position, transform.right, rotationX);

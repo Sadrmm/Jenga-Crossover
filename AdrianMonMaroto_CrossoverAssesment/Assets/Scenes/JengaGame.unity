@@ -397,7 +397,7 @@ MonoBehaviour:
   - {fileID: 1014363775}
   - {fileID: 1492329809}
   _cameraControl: {fileID: 963194229}
-  _spawnIndex: 0
+  _focusIndex: 0
 --- !u!4 &860624871
 Transform:
   m_ObjectHideFlags: 0
@@ -807,6 +807,22 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2376149452388649258, guid: 96655dfec84745e418c0436a91357ea7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7068020248081996319, guid: 96655dfec84745e418c0436a91357ea7, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7068020248081996319, guid: 96655dfec84745e418c0436a91357ea7, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7068020248081996319, guid: 96655dfec84745e418c0436a91357ea7, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7068020248081996319, guid: 96655dfec84745e418c0436a91357ea7, type: 3}
+      propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9146092547095677458, guid: 96655dfec84745e418c0436a91357ea7, type: 3}
