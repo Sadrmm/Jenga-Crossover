@@ -1,8 +1,10 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 public class UIJengaManager : MonoBehaviour
 {
     [SerializeField] UIDatanfoPanel _uiDataInfoPanel;
+    public UnityAction OnHidedAll;
 
     private void Start()
     {
@@ -12,6 +14,10 @@ public class UIJengaManager : MonoBehaviour
     public void HideAll()
     {
         _uiDataInfoPanel.gameObject.SetActive(false);
+
+        if (OnHidedAll != null) { 
+            OnHidedAll.Invoke();
+        }
     }
 
     public void ShowDataInfo(string gradeLevel, string domain, string cluster, string standardId, string StandardDescription)

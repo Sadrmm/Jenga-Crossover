@@ -27,6 +27,16 @@ public class GameManager : MonoBehaviour
     [Min(0)]
     [SerializeField] private int _spawnIndex;
 
+    private void OnEnable()
+    {
+        _uiJengaManager.OnHidedAll += EnableCameraControl;
+    }
+
+    private void OnDisable()
+    {
+        _uiJengaManager.OnHidedAll -= EnableCameraControl;
+    }
+
     IEnumerator Start()
     {
         yield return StartCoroutine(APICall.GetRequest());
@@ -73,8 +83,29 @@ public class GameManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            _uiJengaManager.HideAll();
+            HideData();
         }
+    }
+    private void ShowData(StackData data)
+    {
+        _uiJengaManager.ShowDataInfo(data.grade, data.domain, data.cluster, data.standardid, data.standarddescription);
+        DisableCameraControl();
+    }
+
+    private void HideData()
+    {
+        _uiJengaManager.HideAll();
+        EnableCameraControl();
+    }
+
+    private void EnableCameraControl()
+    {
+        _cameraControl.enabled = true;
+    }
+
+    private void DisableCameraControl()
+    {
+        _cameraControl.enabled = false;
     }
 
     private void ChangeStack()
@@ -90,10 +121,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void ShowData(StackData data)
-    {
-        _uiJengaManager.ShowDataInfo(data.grade, data.domain, data.cluster, data.standardid, data.standarddescription);
-    }
 
     private void SpawnJengaStack(SpawnPoint spawnPoint, ref int firstIndex)
     {
