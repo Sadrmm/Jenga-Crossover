@@ -1,13 +1,18 @@
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 public class UIJengaManager : MonoBehaviour
 {
     [SerializeField] UIDatanfoPanel _uiDataInfoPanel;
-    public UnityAction OnHidedAll;
+    public UnityAction OnHidedAllEvent;
+
+    [SerializeField] Button _testMyStackBtn;
+    public UnityAction OnTestMyStackEvent;
 
     private void Start()
     {
+        _testMyStackBtn.onClick.AddListener(OnTestMyStackEvent);
         HideAll();
     }
 
@@ -15,8 +20,8 @@ public class UIJengaManager : MonoBehaviour
     {
         _uiDataInfoPanel.gameObject.SetActive(false);
 
-        if (OnHidedAll != null) { 
-            OnHidedAll.Invoke();
+        if (OnHidedAllEvent != null) { 
+            OnHidedAllEvent.Invoke();
         }
     }
 

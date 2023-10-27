@@ -3,6 +3,13 @@ using UnityEngine;
 
 public class JengaBlock : MonoBehaviour
 {
+    public enum BlockType
+    {
+        Glass = 0,
+        Wood = 1,
+        Stone = 2
+    }
+
     [SerializeField] private Material[] _blockMaterials;
 
     [SerializeField] private MeshRenderer _meshRenderer;

@@ -25,30 +25,38 @@ public class GameManager : MonoBehaviour
     [SerializeField] CameraControl _cameraControl;
     
     [Min(0)]
-    [SerializeField] private int _spawnIndex;
+    [SerializeField] private int _focusIndex;
+
+    private List<JengaBlock[]> _stacksJengaBlocks;
+    private List<bool> _stacksTested;
 
     private void OnEnable()
     {
-        _uiJengaManager.OnHidedAll += EnableCameraControl;
+        _uiJengaManager.OnHidedAllEvent += EnableCameraControl;
+        _uiJengaManager.OnTestMyStackEvent += TestMyStack;
     }
 
     private void OnDisable()
     {
-        _uiJengaManager.OnHidedAll -= EnableCameraControl;
+        _uiJengaManager.OnHidedAllEvent -= EnableCameraControl;
+        _uiJengaManager.OnTestMyStackEvent -= TestMyStack;
     }
 
     IEnumerator Start()
     {
+        int firstIndex = 0;
+        _stacksJengaBlocks = new List<JengaBlock[]>();
+        _stacksTested = new List<bool>();
+
         yield return StartCoroutine(APICall.GetRequest());
 
-        int firstIndex = 0;
         SpawnJengaStack(_spawnPoints[0], ref firstIndex);
         SpawnJengaStack(_spawnPoints[1], ref firstIndex);
         SpawnJengaStack(_spawnPoints[2], ref firstIndex);
         
         // just in case the designer put an incorrect index, we put the latest
-        if (_spawnIndex > _spawnPoints.Length) {
-            _spawnIndex = _spawnPoints.Length - 1;
+        if (_focusIndex > _spawnPoints.Length) {
+            _focusIndex = _spawnPoints.Length - 1;
         }
         SwitchStackFocus(ORDER.SAME);
     }
@@ -57,6 +65,33 @@ public class GameManager : MonoBehaviour
     {
         ChangeStack();
         HideShowJengaInfo();
+    }
+
+    private void TestMyStack()
+    {
+        // if already tested, do nothing
+        if (_stacksTested[_focusIndex]) { 
+            return;
+        }
+
+        // delete glass blocks and let physics act
+        for (int i = 0; i < _stacksJengaBlocks[_focusIndex].Length; i++) {
+            JengaBlock currentBlock = _stacksJengaBlocks[_focusIndex][i];
+
+            if (currentBlock == null) {
+                Debug.LogError("Check here, currentBlock null");
+                break;
+            }
+
+            if (currentBlock.Data.mastery != (int)JengaBlock.BlockType.Glass) {
+                continue;
+            }
+
+            Destroy(currentBlock.gameObject);
+        }
+
+        // set as tested
+        _stacksTested[_focusIndex] = true;
     }
 
     private void HideShowJengaInfo()
@@ -86,6 +121,7 @@ public class GameManager : MonoBehaviour
             HideData();
         }
     }
+
     private void ShowData(StackData data)
     {
         _uiJengaManager.ShowDataInfo(data.grade, data.domain, data.cluster, data.standardid, data.standarddescription);
@@ -162,6 +198,8 @@ public class GameManager : MonoBehaviour
         int blocksPerCol = 3;
         float spaceBtwBlocks = 1.25f;
 
+        JengaBlock[] jengaBlocksInStack = new JengaBlock[currentStackDataList.Count];
+
         while (i < currentStackDataList.Count) {
 
             float currentHeight = i / blocksPerCol;
@@ -178,6 +216,9 @@ public class GameManager : MonoBehaviour
 
             jengaBlock.Init(stackDataList[i+copyFirstIndex]);
 
+            // add jengablock to the array
+            jengaBlocksInStack[i] = jengaBlock;
+
             i++;
             j++;
             if (j >= blocksPerCol) {
@@ -185,17 +226,20 @@ public class GameManager : MonoBehaviour
                 flipRot = !flipRot;
             }
         }
+
+        _stacksJengaBlocks.Add(jengaBlocksInStack);
+        _stacksTested.Add(false);
     }
 
     private void SwitchStackFocus(ORDER order)
     {
-        _spawnIndex += (int)order;
+        _focusIndex += (int)order;
 
-        if (_spawnIndex < 0)
-            _spawnIndex = _spawnPoints.Length - 1;
-        if (_spawnIndex >= _spawnPoints.Length)
-            _spawnIndex = 0;
+        if (_focusIndex < 0)
+            _focusIndex = _spawnPoints.Length - 1;
+        if (_focusIndex >= _spawnPoints.Length)
+            _focusIndex = 0;
 
-        _cameraControl.SetTarget(_spawnPoints[_spawnIndex].Center);
+        _cameraControl.SetTarget(_spawnPoints[_focusIndex].Center);
     }
 }
